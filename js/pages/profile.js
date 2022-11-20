@@ -3,15 +3,23 @@ import {
   ref,
   uploadString,
   getDownloadURL,
+  getStorage,
+  deleteObject,
+  // 프로필 삭제 api 검색해서 따로 import해서  추가했더니 화면이 하얗게 보임
+  // 있는 import에 이렇게 'getStorage, deleteObject'만 추가 하니 오류 안남
 } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js";
 import { updateProfile } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
-//프로필 삭제
-import { getStorage, ref, deleteObject } from "firebase/storage";
 
 export const changeProfile = async (event) => {
   event.preventDefault();
   document.getElementById("profileBtn").disabled = true;
+  // 프로필 삭제 버튼 비활성화
+  document.getElementById("deleteBtn").disabled = true;
+  // 프로필 삭제
+  const storage = getStorage();
+  const desertRef = ref(storage, "downloadUrl");
+  //프로필 삭제
 
   const imgRef = ref(
     storageService,
@@ -29,7 +37,15 @@ export const changeProfile = async (event) => {
   await updateProfile(authService.currentUser, {
     displayName: newNickname ? newNickname : null,
     photoURL: downloadUrl ?? null,
+  });
+
+  //프로필 삭제
+  await deleteObject(desertRef, {
+    displayName: newNickname ?? null,
+    photoURL: downloadUrl ?? null,
   })
+    //프로필 삭제 - 이렇게 await 써서 안에 넣으니까 프로필 삭제 버튼 누르면 프로필 수정 실패 에러 창이 뜸
+
     .then(() => {
       alert("프로필 수정 완료");
       window.location.hash = "#fanLog";
@@ -39,22 +55,6 @@ export const changeProfile = async (event) => {
       console.log("error:", error);
     });
 };
-
-// 프로필 삭제 기능 구현해보기
-export const changeProfile = async (event) => {
-  event.preventDefault();
-  document.getElementById("deleteBtn").disabled = true;
-
-  const storage = getStorage();
-  const desertRef = ref(storage, "downloadUrl");
-
-  deleteObject(desertRef {
-    displayName: null,
-    photoURL: null,
-  })
-
-};
-// 프로필 삭제 기능 구현
 
 export const onFileChange = (event) => {
   const theFile = event.target.files[0]; // file 객체
