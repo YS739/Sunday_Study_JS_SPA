@@ -6,10 +6,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js";
 import { updateProfile } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
+//프로필 삭제
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 export const changeProfile = async (event) => {
   event.preventDefault();
   document.getElementById("profileBtn").disabled = true;
+
   const imgRef = ref(
     storageService,
     `${authService.currentUser.uid}/${uuidv4()}`
@@ -36,6 +39,22 @@ export const changeProfile = async (event) => {
       console.log("error:", error);
     });
 };
+
+// 프로필 삭제 기능 구현해보기
+export const changeProfile = async (event) => {
+  event.preventDefault();
+  document.getElementById("deleteBtn").disabled = true;
+
+  const storage = getStorage();
+  const desertRef = ref(storage, "downloadUrl");
+
+  deleteObject(desertRef {
+    displayName: null,
+    photoURL: null,
+  })
+
+};
+// 프로필 삭제 기능 구현
 
 export const onFileChange = (event) => {
   const theFile = event.target.files[0]; // file 객체
