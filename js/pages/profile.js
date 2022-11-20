@@ -14,12 +14,7 @@ import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 export const changeProfile = async (event) => {
   event.preventDefault();
   document.getElementById("profileBtn").disabled = true;
-  // 프로필 삭제 버튼 비활성화
-  document.getElementById("deleteBtn").disabled = true;
-  // 프로필 삭제
-  const storage = getStorage();
-  const desertRef = ref(storage, "downloadUrl");
-  //프로필 삭제
+
 
   const imgRef = ref(
     storageService,
@@ -39,13 +34,6 @@ export const changeProfile = async (event) => {
     photoURL: downloadUrl ?? null,
   });
 
-  //프로필 삭제
-  await deleteObject(desertRef, {
-    displayName: newNickname ?? null,
-    photoURL: downloadUrl ?? null,
-  })
-    //프로필 삭제 - 이렇게 await 써서 안에 넣으니까 프로필 삭제 버튼 누르면 프로필 수정 실패 에러 창이 뜸
-
     .then(() => {
       alert("프로필 수정 완료");
       window.location.hash = "#fanLog";
@@ -55,6 +43,33 @@ export const changeProfile = async (event) => {
       console.log("error:", error);
     });
 };
+
+  // 프로필 삭제
+export const changeProfile = async (event) => {
+  event.preventDefault();
+  document.getElementById("deleteBtn").disabled = true;
+
+  const storage = getStorage();
+  const desertRef = ref(storage, "downloadUrl");
+  
+  await deleteObject(desertRef, {
+    displayName: newNickname ?? null,
+    photoURL: downloadUrl ?? null,
+  })
+
+  .then(() => {
+    alert("프로필 삭제 완료");
+    window.location.hash = "#fanLog";
+  })
+  .catch((error) => {
+    alert("프로필 삭제 실패");
+    console.log("error:", error);
+  });
+};
+// 이렇게 하니까 changeProfile이 두 번 선언돼서 창이 또 하얗게 뜸
+
+
+
 
 export const onFileChange = (event) => {
   const theFile = event.target.files[0]; // file 객체
